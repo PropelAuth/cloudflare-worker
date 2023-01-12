@@ -12,7 +12,7 @@ A library for managing authentication, backed by [PropelAuth](https://www.propel
 
 ## Documentation
 
-- Full reference this library is [here](https://docs.propelauth.com/reference/frontend-apis/node.html)
+- Full reference this library is [here](https://docs.propelauth.com/reference/frontend-apis/cloudflare.html)
 - Getting started guides for PropelAuth are [here](https://docs.propelauth.com/)
 
 ## Questions?

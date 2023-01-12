@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/PropelAuth/cloudflare-worker"
   },
-  "version": "v2.0.0",
+  "version": "v2.0.1",
   "license": "MIT",
   "keywords": [
     "auth",
@@ -38,8 +38,11 @@
     "test": "jest --silent",
     "prepublishOnly": "npm run build"
   },
-  "module": "./dist/index.mjs",
+  "module": "dist/index.mjs",
   "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "jest": {
     "testMatch": [
       "**/test/*.ts"

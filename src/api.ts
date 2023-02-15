@@ -219,8 +219,9 @@ export type CreateUserRequest = {
     sendEmailToConfirmEmailAddress?: boolean,
 
     password?: string,
-    username?: string,
+    askUserToUpdatePasswordOnLogin?: boolean,
 
+    username?: string,
     firstName?: string,
     lastName?: string,
 }
@@ -232,8 +233,9 @@ export function createUser(authUrl: URL, apiKey: string, createUserRequest: Crea
         send_email_to_confirm_email_address: createUserRequest.sendEmailToConfirmEmailAddress,
 
         password: createUserRequest.password,
-        username: createUserRequest.username,
+        ask_user_to_update_password_on_login: createUserRequest.askUserToUpdatePasswordOnLogin,
 
+        username: createUserRequest.username,
         first_name: createUserRequest.firstName,
         last_name: createUserRequest.lastName,
     }
@@ -393,6 +395,7 @@ export function updateUserEmail(authUrl: URL, apiKey: string, userId: string, up
 
 export type UpdateUserPasswordRequest = {
     password: string
+    askUserToUpdatePasswordOnLogin?: boolean,
 }
 
 export function updateUserPassword(authUrl: URL, apiKey: string, userId: string, updateUserPasswordRequest: UpdateUserPasswordRequest): Promise<boolean> {
@@ -402,6 +405,7 @@ export function updateUserPassword(authUrl: URL, apiKey: string, userId: string,
 
     const request = {
         password: updateUserPasswordRequest.password,
+        ask_user_to_update_password_on_login: updateUserPasswordRequest.askUserToUpdatePasswordOnLogin,
     }
     return httpRequest(authUrl, apiKey, `/api/backend/v1/user/${userId}/password`, "PUT", JSON.stringify(request))
         .then((httpResponse) => {
@@ -458,6 +462,7 @@ export type MigrateUserFromExternalSourceRequest = {
     existingUserId?: string,
     existingPasswordHash?: string,
     existingMfaBase32EncodedSecret?: string,
+    askUserToUpdatePasswordOnLogin?: boolean,
 
     enabled?: boolean,
 
@@ -476,6 +481,7 @@ export function migrateUserFromExternalSource(authUrl: URL,
         existing_user_id: migrateUserFromExternalSourceRequest.existingUserId,
         existing_password_hash: migrateUserFromExternalSourceRequest.existingPasswordHash,
         existing_mfa_base32_encoded_secret: migrateUserFromExternalSourceRequest.existingMfaBase32EncodedSecret,
+        update_password_required: migrateUserFromExternalSourceRequest.askUserToUpdatePasswordOnLogin,
 
         enabled: migrateUserFromExternalSourceRequest.enabled,
 

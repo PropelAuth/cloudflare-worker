@@ -1,9 +1,10 @@
 import {
+    AccessToken,
     addUserToOrg,
     AddUserToOrgRequest,
     allowOrgToSetupSamlConnection,
     changeUserRoleInOrg,
-    ChangeUserRoleInOrgRequest,
+    ChangeUserRoleInOrgRequest, createAccessToken, CreateAccessTokenRequest,
     createMagicLink,
     CreateMagicLinkRequest,
     createOrg,
@@ -155,6 +156,10 @@ export function initAuth(opts: AuthOptions) {
 
     function createMagicLinkWrapper(createMagicLinkRequest: CreateMagicLinkRequest): Promise<MagicLink> {
         return createMagicLink(authUrl, apiKey, createMagicLinkRequest)
+    }
+
+    function createAccessTokenWrapper(createAccessTokenRequest: CreateAccessTokenRequest): Promise<AccessToken> {
+        return createAccessToken(authUrl, apiKey, createAccessTokenRequest)
     }
 
     function migrateUserFromExternalSourceWrapper(migrateUserFromExternalSourceRequest: MigrateUserFromExternalSourceRequest): Promise<User> {

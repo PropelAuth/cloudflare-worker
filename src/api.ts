@@ -8,7 +8,11 @@ import {
     MigrateUserException,
     CreateOrgException,
     AddUserToOrgException,
-    UpdateUserPasswordException, ChangeUserRoleInOrgException, RemoveUserFromOrgException, UpdateOrgException
+    UpdateUserPasswordException,
+    ChangeUserRoleInOrgException,
+    RemoveUserFromOrgException,
+    UpdateOrgException,
+    UserNotFoundException, AccessTokenCreationException
 } from "./exceptions";
 
 export function fetchUserMetadataByUserIdWithIdCheck(authUrl: URL, apiKey: string, userId: string, includeOrgs?: boolean): Promise<UserMetadata | null> {
@@ -449,6 +453,42 @@ export function createMagicLink(authUrl: URL, apiKey: string, createMagicLinkReq
                 throw new MagicLinkCreationException(httpResponse.response)
             } else if (httpResponse.statusCode && httpResponse.statusCode >= 400) {
                 throw new Error("Unknown error when creating magic link")
+            }
+
+            return JSON.parse(httpResponse.response)
+        })
+}
+
+export type CreateAccessTokenRequest = {
+    userId: string,
+    durationInMinutes: number,
+}
+
+export type AccessToken = {
+    access_token: string
+}
+
+export function createAccessToken(authUrl: URL, apiKey: string, createAccessTokenRequest: CreateAccessTokenRequest): Promise<AccessToken> {
+    if (!isValidId(createAccessTokenRequest.userId)) {
+        throw new UserNotFoundException()
+    }
+
+    const request = {
+        user_id: createAccessTokenRequest.userId,
+        duration_in_minutes: createAccessTokenRequest.durationInMinutes,
+    }
+    return httpRequest(authUrl, apiKey, `/api/backend/v1/access_token`, "POST", JSON.stringify(request))
+        .then((httpResponse) => {
+            if (httpResponse.statusCode === 401) {
+                throw new Error("apiKey is incorrect")
+            } else if (httpResponse.statusCode === 400) {
+                throw new AccessTokenCreationException(httpResponse.response)
+            } else if (httpResponse.statusCode === 403) {
+                throw new UserNotFoundException()
+            } else if (httpResponse.statusCode === 404) {
+                throw new Error("Access token creation is not enabled")
+            } else if (httpResponse.statusCode && httpResponse.statusCode >= 400) {
+                throw new Error("Unknown error when creating access token")
             }
 
             return JSON.parse(httpResponse.response)

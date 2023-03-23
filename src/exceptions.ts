@@ -1,5 +1,6 @@
 export class CreateUserException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -7,7 +8,8 @@ export class CreateUserException extends Error {
 }
 
 export class MigrateUserException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -15,7 +17,8 @@ export class MigrateUserException extends Error {
 }
 
 export class CreateOrgException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -23,7 +26,8 @@ export class CreateOrgException extends Error {
 }
 
 export class AddUserToOrgException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -31,7 +35,8 @@ export class AddUserToOrgException extends Error {
 }
 
 export class ChangeUserRoleInOrgException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -39,7 +44,8 @@ export class ChangeUserRoleInOrgException extends Error {
 }
 
 export class RemoveUserFromOrgException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -47,7 +53,8 @@ export class RemoveUserFromOrgException extends Error {
 }
 
 export class UpdateOrgException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -57,6 +64,7 @@ export class UpdateOrgException extends Error {
 export class ForbiddenException extends Error {
     readonly message: string;
     readonly status: number;
+
     constructor(message: string) {
         super(message);
         this.message = message;
@@ -65,7 +73,17 @@ export class ForbiddenException extends Error {
 }
 
 export class MagicLinkCreationException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
+export class AccessTokenCreationException extends Error {
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -75,6 +93,7 @@ export class MagicLinkCreationException extends Error {
 export class UnauthorizedException extends Error {
     readonly message: string;
     readonly status: number;
+
     constructor(message: string) {
         super(message);
         this.message = message;
@@ -83,7 +102,8 @@ export class UnauthorizedException extends Error {
 }
 
 export class UpdateUserEmailException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -91,7 +111,8 @@ export class UpdateUserEmailException extends Error {
 }
 
 export class UpdateUserPasswordException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
@@ -99,9 +120,14 @@ export class UpdateUserPasswordException extends Error {
 }
 
 export class UpdateUserMetadataException extends Error {
-    readonly fieldToErrors: {[fieldName: string]: string[]};
+    readonly fieldToErrors: { [fieldName: string]: string[] };
+
     constructor(message: string) {
         super(message);
         this.fieldToErrors = JSON.parse(message);
     }
 }
+
+export class UserNotFoundException extends Error {
+}
+

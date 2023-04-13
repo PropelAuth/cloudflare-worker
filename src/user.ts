@@ -5,7 +5,10 @@ export type User = {
     // If you used our migration APIs to migrate this user from a different system,
     //   this is their original ID from that system.
     legacyUserId?: string
+    impersonatorUserId?: string
+    metadata?: {[key: string]: any}
 }
+
 export type Org = {
     orgId: string,
     name: string,
@@ -34,20 +37,24 @@ export type UserMetadata = {
     // If you used our migration APIs to migrate this user from a different system,
     //   this is their original ID from that system.
     legacyUserId?: string
+    impersonatorUserId?: string
+    metadata?: {[key: string]: any}
 }
 
 export class OrgMemberInfo {
     public orgId: string
     public orgName: string
+    public orgMetadata: {[key: string]: any}
     public urlSafeOrgName: string
 
     private userAssignedRole: string
     private userInheritedRolesPlusCurrentRole: string[]
     private userPermissions: string[]
 
-    constructor(orgId: string, orgName: string, urlSafeOrgName: string, userAssignedRole: string, userInheritedRolesPlusCurrentRole: string[], userPermissions: string[]) {
+    constructor(orgId: string, orgName: string, orgMetadata: {[key: string]: any}, urlSafeOrgName: string, userAssignedRole: string, userInheritedRolesPlusCurrentRole: string[], userPermissions: string[]) {
         this.orgId = orgId
         this.orgName = orgName
+        this.orgMetadata = orgMetadata
         this.urlSafeOrgName = urlSafeOrgName
 
         this.userAssignedRole = userAssignedRole
@@ -102,6 +109,7 @@ export type OrgIdToOrgMemberInfo = {
 export type InternalOrgMemberInfo = {
     org_id: string
     org_name: string
+    org_metadata: {[key: string]: any}
     url_safe_org_name: string
     user_role: string
     inherited_user_roles_plus_current_role: string[]
@@ -113,6 +121,8 @@ export type InternalUser = {
 
     // If you used our migration APIs to migrate this user from a different system, this is their original ID from that system.
     legacy_user_id?: string
+    impersonatorUserId?: string
+    metadata?: {[key: string]: any}
 }
 
 export function toUser(snake_case: InternalUser): User {
@@ -120,6 +130,8 @@ export function toUser(snake_case: InternalUser): User {
         userId: snake_case.user_id,
         orgIdToOrgMemberInfo: toOrgIdToOrgMemberInfo(snake_case.org_id_to_org_member_info),
         legacyUserId: snake_case.legacy_user_id,
+        impersonatorUserId: snake_case.impersonatorUserId,
+        metadata: snake_case.metadata,
     }
 }
 
@@ -137,6 +149,7 @@ export function toOrgIdToOrgMemberInfo(snake_case?: {
             camelCase[key] = new OrgMemberInfo(
                 snakeCaseValue.org_id,
                 snakeCaseValue.org_name,
+                snakeCaseValue.org_metadata,
                 snakeCaseValue.url_safe_org_name,
                 snakeCaseValue.user_role,
                 snakeCaseValue.inherited_user_roles_plus_current_role,

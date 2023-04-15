@@ -104,6 +104,7 @@ test("toUser converts correctly with orgs", async () => {
             "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": {
                 org_id: "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
                 org_name: "orgA",
+                org_metadata: {"orgdata_a": "orgvalue_a"},
                 url_safe_org_name: "orga",
                 user_role: "Owner",
                 inherited_user_roles_plus_current_role: ["Owner", "Admin", "Member"],
@@ -112,6 +113,7 @@ test("toUser converts correctly with orgs", async () => {
             "4ca20d17-5021-4d62-8b3d-148214fa8d6d": {
                 org_id: "4ca20d17-5021-4d62-8b3d-148214fa8d6d",
                 org_name: "orgB",
+                org_metadata: {"orgdata_b": "orgvalue_b"},
                 url_safe_org_name: "orgb",
                 user_role: "Admin",
                 inherited_user_roles_plus_current_role: ["Admin", "Member"],
@@ -120,6 +122,7 @@ test("toUser converts correctly with orgs", async () => {
             "15a31d0c-d284-4e7b-80a2-afb23f939cc3": {
                 org_id: "15a31d0c-d284-4e7b-80a2-afb23f939cc3",
                 org_name: "orgC",
+                org_metadata: {"orgdata_c": "orgvalue_c"},
                 url_safe_org_name: "orgc",
                 user_role: "Member",
                 inherited_user_roles_plus_current_role: ["Member"],
@@ -134,6 +137,7 @@ test("toUser converts correctly with orgs", async () => {
             "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": new OrgMemberInfo(
                 "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
                 "orgA",
+                {"orgdata_a": "orgvalue_a"},
                 "orga",
                 "Owner",
                 ["Owner", "Admin", "Member"],
@@ -142,6 +146,7 @@ test("toUser converts correctly with orgs", async () => {
             "4ca20d17-5021-4d62-8b3d-148214fa8d6d": new OrgMemberInfo(
                 "4ca20d17-5021-4d62-8b3d-148214fa8d6d",
                 "orgB",
+                {"orgdata_b": "orgvalue_b"},
                 "orgb",
                 "Admin",
                 ["Admin", "Member"],
@@ -150,6 +155,7 @@ test("toUser converts correctly with orgs", async () => {
             "15a31d0c-d284-4e7b-80a2-afb23f939cc3": new OrgMemberInfo(
                 "15a31d0c-d284-4e7b-80a2-afb23f939cc3",
                 "orgC",
+                {"orgdata_c": "orgvalue_c"},
                 "orgc",
                 "Member",
                 ["Member"],
@@ -239,6 +245,9 @@ test("validateAccessTokenAndGetUserWithOrgInfoWithMinimumRole works with miniumu
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
+        metadata: {
+            "userdata": "uservalue",
+        }
     }
     const orgInfo: RequiredOrgInfo = {
         orgId: orgMemberInfo.org_id,
@@ -435,6 +444,7 @@ function randomOrg(): InternalOrgMemberInfo {
     return {
         org_id: uuid(),
         org_name: randomString(),
+        org_metadata: {"internalData": randomString()},
         url_safe_org_name: urlSafeOrgName,
         user_role: "Admin",
         inherited_user_roles_plus_current_role: ["Admin", "Member"],

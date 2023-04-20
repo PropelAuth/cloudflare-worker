@@ -100,6 +100,8 @@ test("validateAccessTokenAndGetUser fails with incorrect issuer", async () => {
 test("toUser converts correctly with orgs", async () => {
     const internalUser: InternalUser = {
         user_id: "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        email: "easteregg@propelauth.com",
+        first_name: "easter",
         org_id_to_org_member_info: {
             "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": {
                 org_id: "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
@@ -133,6 +135,8 @@ test("toUser converts correctly with orgs", async () => {
 
     const user: User = {
         userId: "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        email: "easteregg@propelauth.com",
+        firstName: "easter",
         orgIdToOrgMemberInfo: {
             "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": new OrgMemberInfo(
                 "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
@@ -170,10 +174,12 @@ test("toUser converts correctly with orgs", async () => {
 test("toUser converts correctly without orgs", async () => {
     const internalUser: InternalUser = {
         user_id: "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        email: "easteregg@propelauth.com",
         legacy_user_id: "something",
     }
     const user: User = {
         userId: "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        email: "easteregg@propelauth.com",
         legacyUserId: "something",
     }
     expect(toUser(internalUser)).toEqual(user)
@@ -186,6 +192,7 @@ test("validateAuthHeaderAndGetUserWithOrgInfo get user and org for extracted org
     const orgMemberInfo = randomOrg()
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
@@ -209,6 +216,7 @@ test("validateAuthHeaderAndGetUserWithOrgInfo fails for valid access token but u
 
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
     }
     const orgInfo: RequiredOrgInfo = {
         orgId: uuid(),
@@ -242,6 +250,7 @@ test("validateAccessTokenAndGetUserWithOrgInfoWithMinimumRole works with miniumu
     const orgMemberInfo = randomOrg()
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
@@ -279,6 +288,7 @@ test("validateAuthHeaderAndGetUserWithOrgInfoWithExactRole works with requiredRo
     const orgMemberInfo = randomOrg()
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
@@ -313,6 +323,7 @@ test("validateAuthHeaderAndGetUserWithOrgInfoWithPermission works with permissio
     const orgMemberInfo = randomOrg()
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
@@ -347,6 +358,7 @@ test("validateAuthHeaderAndGetUserWithOrgInfoWithAllPermissions works with permi
     const orgMemberInfo = randomOrg()
     const internalUser: InternalUser = {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: {
             [orgMemberInfo.org_id]: orgMemberInfo,
         },
@@ -420,6 +432,7 @@ function randomString() {
 function randomInternalUser(): InternalUser {
     return {
         user_id: uuid(),
+        email: uuid(),
         org_id_to_org_member_info: randomOrgIdToOrgMemberInfo(),
     }
 }

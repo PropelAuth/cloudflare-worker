@@ -1,7 +1,10 @@
 export type User = {
     userId: string
     orgIdToOrgMemberInfo?: OrgIdToOrgMemberInfo
-
+    email: string
+    firstName?: string,
+    lastName?: string,
+    username?: string,
     // If you used our migration APIs to migrate this user from a different system,
     //   this is their original ID from that system.
     legacyUserId?: string
@@ -118,7 +121,10 @@ export type InternalOrgMemberInfo = {
 export type InternalUser = {
     user_id: string
     org_id_to_org_member_info?: { [org_id: string]: InternalOrgMemberInfo }
-
+    email: string
+    first_name?: string,
+    last_name?: string,
+    username?: string,
     // If you used our migration APIs to migrate this user from a different system, this is their original ID from that system.
     legacy_user_id?: string
     impersonatorUserId?: string
@@ -129,6 +135,10 @@ export function toUser(snake_case: InternalUser): User {
     return {
         userId: snake_case.user_id,
         orgIdToOrgMemberInfo: toOrgIdToOrgMemberInfo(snake_case.org_id_to_org_member_info),
+        email: snake_case.email,
+        firstName: snake_case.first_name,
+        lastName: snake_case.last_name,
+        username: snake_case.username,
         legacyUserId: snake_case.legacy_user_id,
         impersonatorUserId: snake_case.impersonatorUserId,
         metadata: snake_case.metadata,

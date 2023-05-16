@@ -128,6 +128,9 @@ export class UpdateUserMetadataException extends Error {
     }
 }
 
+export class UserNotFoundException extends Error {
+}
+
 export class ApiKeyValidateException extends Error {
     readonly fieldToErrors: {[fieldName: string]: string[]};
     constructor(message: string) {
@@ -167,7 +170,3 @@ export class ApiKeyFetchException extends Error {
         this.fieldToErrors = JSON.parse(message);
     }
 }
-
-export class UserNotFoundException extends Error {
-}
-

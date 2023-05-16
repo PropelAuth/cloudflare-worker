@@ -128,6 +128,46 @@ export class UpdateUserMetadataException extends Error {
     }
 }
 
+export class ApiKeyValidateException extends Error {
+    readonly fieldToErrors: {[fieldName: string]: string[]};
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
+export class ApiKeyDeleteException extends Error {
+    readonly fieldToErrors: {[fieldName: string]: string[]};
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
+export class ApiKeyUpdateException extends Error {
+    readonly fieldToErrors: {[fieldName: string]: string[]};
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
+export class ApiKeyCreateException extends Error {
+    readonly fieldToErrors: {[fieldName: string]: string[]};
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
+export class ApiKeyFetchException extends Error {
+    readonly fieldToErrors: {[fieldName: string]: string[]};
+    constructor(message: string) {
+        super(message);
+        this.fieldToErrors = JSON.parse(message);
+    }
+}
+
 export class UserNotFoundException extends Error {
 }
 

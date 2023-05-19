@@ -249,8 +249,8 @@ export function initAuth(opts: AuthOptions) {
         return deleteApiKey(authUrl, integrationApiKey, apiKeyId)
     }
 
-    function validateApiKeyWrapper(apiKeyId: string): Promise<ApiKeyValidation> {
-        return validateApiKey(authUrl, integrationApiKey, apiKeyId)
+    function validateApiKeyWrapper(apiKeyToken: string): Promise<ApiKeyValidation> {
+        return validateApiKey(authUrl, integrationApiKey, apiKeyToken)
     }
 
     return {

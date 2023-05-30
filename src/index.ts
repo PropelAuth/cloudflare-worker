@@ -15,14 +15,20 @@ export {
     AccessToken
 } from "./api"
 export {
+    ApiKeyValidateException,
+    ApiKeyDeleteException,
+    ApiKeyUpdateException,
+    ApiKeyCreateException,
+    ApiKeyFetchException,
+    AccessTokenCreationException,
     AddUserToOrgException,
     CreateOrgException,
     CreateUserException,
     ForbiddenException,
     MagicLinkCreationException,
     MigrateUserException,
-    UnauthorizedException,
     UserNotFoundException,
+    UnauthorizedException,
     UpdateUserEmailException,
     UpdateUserMetadataException
 } from "./exceptions"

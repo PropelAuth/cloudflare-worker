@@ -13,6 +13,7 @@ import {
 } from "../src"
 import {RequiredOrgInfo} from "../src/auth"
 import * as jose from 'jose'
+import {parseSnakeCaseToCamelCase} from "../src/api";
 
 const AUTH_URL = "https://auth.example.com"
 const ALGO = "RS256"
@@ -169,6 +170,58 @@ test("toUser converts correctly with orgs", async () => {
     }
 
     expect(toUser(internalUser)).toEqual(user)
+})
+
+test("parseSnakeCaseToCamelCase converts correctly", async () => {
+    const snakeCase = {
+        "user_id": "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        "email": "easteregg@propelauth.com",
+        "first_name": "easter",
+        "org_id_to_org_member_info": {
+            "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": {
+                "org_id": "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
+                "org_name": "orgA",
+                "org_metadata": {"orgdata_a": "orgvalue_a"},
+            }
+        }
+    }
+    const camelCase = {
+        "userId": "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        "email": "easteregg@propelauth.com",
+        "firstName": "easter",
+        "orgIdToOrgMemberInfo": {
+            "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": {
+                "orgId": "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
+                "orgName": "orgA",
+                "orgMetadata": {"orgdata_a": "orgvalue_a"},
+            }
+        }
+    }
+
+    expect(parseSnakeCaseToCamelCase(JSON.stringify(snakeCase))).toEqual(camelCase)
+})
+
+test("parseSnakeCaseToCamelCase adds functions to orgMemberInfo", async () => {
+    const snakeCase = {
+        "user_id": "cbf064e2-edaa-4d35-b413-a8d857329c12",
+        "email": "easteregg@propelauth.com",
+        "first_name": "easter",
+        "org_id_to_org_member_info": {
+            "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a": {
+                "org_id": "99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a",
+                "org_name": "orgA",
+                "org_metadata": {"orgdata_a": "orgvalue_a"},
+                "url_safe_org_name": "orga",
+                "user_role": "Admin",
+                "inherited_user_roles_plus_current_role": ["Admin", "Member"],
+                "user_permissions": ["read", "write"],
+            }
+        }
+    }
+
+    const camelCase = parseSnakeCaseToCamelCase(JSON.stringify(snakeCase))
+    const orgMemberInfo = camelCase.orgIdToOrgMemberInfo["99ee1329-e536-4aeb-8e2b-9f56c1b8fe8a"]
+    expect(orgMemberInfo.isRole("Admin")).toEqual(true)
 })
 
 test("toUser converts correctly without orgs", async () => {

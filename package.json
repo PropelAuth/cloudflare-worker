@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/PropelAuth/cloudflare-worker"
   },
-  "version": "v2.1.0",
+  "version": "v2.1.1",
   "license": "MIT",
   "keywords": [
     "auth",

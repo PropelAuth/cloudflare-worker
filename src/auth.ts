@@ -56,6 +56,8 @@ import {
     UsersPagedResponse,
     UsersQuery,
     validateApiKey,
+    validateOrgApiKey,
+    validatePersonalApiKey,
 } from "./api"
 import {ForbiddenException, UnauthorizedException} from "./exceptions"
 import {
@@ -65,8 +67,10 @@ import {
     ApiKeyValidation,
     InternalUser,
     Org,
+    OrgApiKeyValidation,
     OrgIdToOrgMemberInfo,
     OrgMemberInfo,
+    PersonalApiKeyValidation,
     toUser,
     User,
     UserAndOrgMemberInfo,
@@ -249,6 +253,14 @@ export function initAuth(opts: AuthOptions) {
         return deleteApiKey(authUrl, integrationApiKey, apiKeyId)
     }
 
+    function validatePersonalApiKeyWrapper(apiKeyToken: string): Promise<PersonalApiKeyValidation> {
+        return validatePersonalApiKey(authUrl, integrationApiKey, apiKeyToken)
+    }
+
+    function validateOrgApiKeyWrapper(apiKeyToken: string): Promise<OrgApiKeyValidation> {
+        return validateOrgApiKey(authUrl, integrationApiKey, apiKeyToken)
+    }
+
     function validateApiKeyWrapper(apiKeyToken: string): Promise<ApiKeyValidation> {
         return validateApiKey(authUrl, integrationApiKey, apiKeyToken)
     }
@@ -303,6 +315,8 @@ export function initAuth(opts: AuthOptions) {
         updateApiKey: updateApiKeyWrapper,
         deleteApiKey: deleteApiKeyWrapper,
         validateApiKey: validateApiKeyWrapper,
+        validatePersonalApiKey: validatePersonalApiKeyWrapper,
+        validateOrgApiKey: validateOrgApiKeyWrapper,
     }
 }
 

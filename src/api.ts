@@ -1,5 +1,16 @@
 import {httpRequest} from "./http"
-import {ApiKeyFull, ApiKeyNew, ApiKeyResultPage, ApiKeyValidation, Org, User, UserMetadata} from "./user"
+import {
+    ApiKeyFull,
+    ApiKeyNew,
+    ApiKeyResultPage,
+    ApiKeyValidation,
+    Org,
+    OrgApiKeyValidation,
+    OrgMemberInfo,
+    PersonalApiKeyValidation,
+    User,
+    UserMetadata
+} from "./user"
 import {
     AccessTokenCreationException,
     AddUserToOrgException,
@@ -40,7 +51,7 @@ export function fetchUserMetadataByQuery(authUrl: URL, integrationApiKey: string
             throw new Error("Unknown error when fetching user metadata")
         }
 
-        return parseUserMetadataAndOptionalPagingInfo(httpResponse.response)
+        return parseSnakeCaseToCamelCase(httpResponse.response)
     })
 }
 
@@ -64,7 +75,7 @@ export function fetchBatchUserMetadata(
                 throw new Error("Unknown error when fetching batch user metadata")
             }
 
-            const userMetadatas = parseUserMetadataAndOptionalPagingInfo(httpResponse.response)
+            const userMetadatas = parseSnakeCaseToCamelCase(httpResponse.response)
 
             const returnValue: { [key: string]: UserMetadata } = {}
             for (let userMetadata of userMetadatas) {
@@ -91,7 +102,7 @@ export function fetchOrg(authUrl: URL, integrationApiKey: string, orgId: string)
             throw new Error("Unknown error when fetching org")
         }
 
-        return parseOrg(httpResponse.response)
+        return parseSnakeCaseToCamelCase(httpResponse.response)
     })
 }
 
@@ -182,7 +193,7 @@ export function fetchUsersByQuery(authUrl: URL, integrationApiKey: string, query
                 throw new Error("Unknown error when fetching users by query")
             }
 
-            return parseUserMetadataAndOptionalPagingInfo(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -221,7 +232,7 @@ export function fetchUsersInOrg(authUrl: URL, integrationApiKey: string, query: 
                 throw new Error("Unknown error when fetching users in org")
             }
 
-            return parseUserMetadataAndOptionalPagingInfo(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -261,7 +272,7 @@ export function createUser(authUrl: URL, integrationApiKey: string, createUserRe
                 throw new Error("Unknown error when creating user")
             }
 
-            return parseUser(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -587,7 +598,7 @@ export function migrateUserFromExternalSource(authUrl: URL,
                 throw new Error("Unknown error when migrating user")
             }
 
-            return parseUser(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -610,7 +621,7 @@ export function createOrg(authUrl: URL, integrationApiKey: string, createOrgRequ
                 throw new Error("Unknown error when creating org")
             }
 
-            return parseOrg(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -805,7 +816,7 @@ export function fetchApiKey(authUrl: URL, integrationApiKey: string, apiKeyId: s
                 throw new Error("Unknown error when creating the end user api key")
             }
 
-            return parseEndUserApiKey(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -837,7 +848,7 @@ export function fetchCurrentApiKeys(authUrl: URL, integrationApiKey: string, api
                 throw new Error("Unknown error when creating the end user api key")
             }
 
-            return parseEndUserApiKey(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -861,7 +872,7 @@ export function fetchArchivedApiKeys(authUrl: URL, integrationApiKey: string, ap
                 throw new Error("Unknown error when creating the end user api key")
             }
 
-            return parseEndUserApiKey(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -891,7 +902,7 @@ export function createApiKey(authUrl: URL, integrationApiKey: string, apiKeyCrea
                 throw new Error("Unknown error when creating the end user api key")
             }
 
-            return parseEndUserApiKey(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -945,9 +956,34 @@ export function deleteApiKey(authUrl: URL, integrationApiKey: string, apiKeyId: 
         })
 }
 
+export async function validatePersonalApiKey(authUrl: URL, integrationApiKey: string, apiKeyToken: string): Promise<PersonalApiKeyValidation> {
+    const apiKeyValidation = await validateApiKey(authUrl, integrationApiKey, apiKeyToken)
+    if (!apiKeyValidation.user || apiKeyValidation.org) {
+        throw new ApiKeyValidateException(JSON.stringify({"api_key_token": ["Not a personal API Key"]}))
+    }
+    return {
+        user: apiKeyValidation.user,
+        metadata: apiKeyValidation.metadata,
+    }
+}
+
+export async function validateOrgApiKey(authUrl: URL, integrationApiKey: string, apiKeyToken: string): Promise<OrgApiKeyValidation> {
+    const apiKeyValidation = await validateApiKey(authUrl, integrationApiKey, apiKeyToken)
+    if (!apiKeyValidation.org) {
+        throw new ApiKeyValidateException(JSON.stringify({"api_key_token": ["Not an org API Key"]}))
+    }
+    return {
+        org: apiKeyValidation.org,
+        metadata: apiKeyValidation.metadata,
+        user: apiKeyValidation.user,
+        userInOrg: apiKeyValidation.userInOrg,
+    }
+}
+
+
 export function validateApiKey(authUrl: URL, integrationApiKey: string, apiKeyToken: string): Promise<ApiKeyValidation> {
     const request = {
-        api_key_token: apiKeyToken,
+        api_key_token: removeBearerIfExists(apiKeyToken),
     }
 
     return httpRequest(authUrl, integrationApiKey, `/api/backend/v1/end_user_api_keys/validate`, "POST", JSON.stringify(request))
@@ -960,7 +996,7 @@ export function validateApiKey(authUrl: URL, integrationApiKey: string, apiKeyTo
                 throw new Error("Unknown error when updating the end user api key")
             }
 
-            return parseEndUserApiKey(httpResponse.response)
+            return parseSnakeCaseToCamelCase(httpResponse.response)
         })
 }
 
@@ -975,6 +1011,16 @@ function isValidHex(id: string): boolean {
     return hexRegex.test(id)
 }
 
+function removeBearerIfExists(token: string): string {
+    if (!token) {
+        return token
+    } else if (token.toLowerCase().startsWith("bearer ")) {
+        return token.substring(7)
+    } else {
+        return token
+    }
+}
+
 function formatQueryParameters(obj: { [key: string]: any }): string {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(obj)) {
@@ -985,123 +1031,60 @@ function formatQueryParameters(obj: { [key: string]: any }): string {
     return params.toString()
 }
 
-function formatIssuer(authUrl: URL): string {
-    return authUrl.origin
+export function parseSnakeCaseToCamelCase(response: string) {
+    let parsedObject = JSON.parse(response);
+    return processKeys(parsedObject);
 }
 
-function parseOrg(response: string): Org {
-    const jsonParse = JSON.parse(response)
+const keysForValueNotToModify = ["metadata", "org_metadata"];
 
-    let org: Org = {
-        orgId: jsonParse.org_id,
-        name: jsonParse.name,
-    }
-
-    if (jsonParse.max_users) {
-        org.maxUsers = jsonParse.max_users
-    }
-
-    return org
+function isOrgMemberInfo(value: any) {
+    return value &&
+        typeof value === "object" &&
+        value.hasOwnProperty("orgId") &&
+        value.hasOwnProperty("orgName") &&
+        value.hasOwnProperty("urlSafeOrgName") &&
+        value.hasOwnProperty("orgMetadata") &&
+        value.hasOwnProperty("userAssignedRole") &&
+        value.hasOwnProperty("userRoles") &&
+        value.hasOwnProperty("userPermissions")
 }
 
-function parseUser(response: string) {
-    return JSON.parse(response, function (key, value) {
-        if (key === "user_id") {
-            this.userId = value
-        } else if (key === "legacy_user_id") {
-            this.legacyUserId = value
-        } else if (key === "org_id_to_org_info") {
-            this.orgIdToOrgInfo = value;
-        } else if (key === "impersonated_user_id") {
-            this.impersonatorUserId = value;
-        } else if (key === "metadata") {
-            this.metadata = value;
-        } else {
-            return value
+function processKeys(obj: any): any {
+    let newObj: any = Array.isArray(obj) ? [] : {};
+    for (let key in obj) {
+        if (!obj.hasOwnProperty(key)) {
+            continue
         }
-    })
-}
 
-function parseUserMetadataAndOptionalPagingInfo(response: string) {
-    return JSON.parse(response, function (key, value) {
-        if (key === "user_id") {
-            this.userId = value
-        } else if (key === "email_confirmed") {
-            this.emailConfirmed = value;
-        } else if (key === "first_name") {
-            this.firstName = value;
-        } else if (key === "last_name") {
-            this.lastName = value;
-        } else if (key === "picture_url") {
-            this.pictureUrl = value;
-        } else if (key === "mfa_enabled") {
-            this.mfaEnabled = value;
-        } else if (key === "created_at") {
-            this.createdAt = value;
-        } else if (key === "last_active_at") {
-            this.lastActiveAt = value;
-        } else if (key === "org_id_to_org_info") {
-            this.orgIdToOrgInfo = value;
-        } else if (key === "org_id") {
-            this.orgId = value;
-        } else if (key === "org_name") {
-            this.orgName = value;
-        } else if (key === "user_role") {
-            this.userAssignedRole = value;
+        let value = obj[key];
+        const doNotModifyValue = keysForValueNotToModify.includes(key)
+        if (!doNotModifyValue && value && typeof value === "object") {
+            value = processKeys(value);
+        }
+
+        if (isOrgMemberInfo(value)) {
+            value = new OrgMemberInfo(
+                value["orgId"], value["orgName"], value["orgMetadata"], value["urlSafeOrgName"],
+                value["userAssignedRole"], value["userRoles"], value["userPermissions"])
+        }
+
+        let newKey;
+        if (key === "user_role") {
+            newKey = "userAssignedRole";
         } else if (key === "inherited_user_roles_plus_current_role") {
-            this.userRoles = value;
-        } else if (key === "user_permissions") {
-            this.userPermissions = value;
-        } else if (key === "total_users") {
-            this.totalUsers = value;
-        } else if (key === "current_page") {
-            this.currentPage = value;
-        } else if (key === "page_size") {
-            this.pageSize = value;
-        } else if (key === "has_more_results") {
-            this.hasMoreResults = value;
-        } else if (key === "has_password") {
-            this.hasPassword = value;
+            newKey = "userRoles";
         } else {
-            return value
+            newKey = camelCase(key);
         }
-    });
+
+        newObj[newKey] = value;
+    }
+    return newObj;
 }
 
-function parseEndUserApiKey(response: string) {
-    return JSON.parse(response, function (key, value) {
-        if (key === "api_key_id") {
-            this.apiKeyId = value;
-        } else if (key === "api_key_token") {
-            this.apiKeyToken = value;
-        } else if (key === "created_at") {
-            this.createdAt = value;
-        } else if (key === "expires_at_seconds") {
-            this.expiresAtSeconds = value;
-        } else if (key === "metadata") {
-            this.metadata = value;
-        } else if (key === "user_id") {
-            this.userId = value;
-        } else if (key === "org_id") {
-            this.orgId = value;
-        } else if (key === "api_keys") {
-            this.apiKeys = value;
-        } else if (key === "total_api_keys") {
-            this.totalApiKeys = value;
-        } else if (key === "current_page") {
-            this.currentPage = value;
-        } else if (key === "page_size") {
-            this.pageSize = value;
-        } else if (key === "has_more_results") {
-            this.hasMoreResults = value;
-        } else if (key === "user_metadata") {
-            this.userMetadata = value;
-        } else if (key === "org_metadata") {
-            this.orgMetadata = value;
-        } else if (key === "user_role_in_org") {
-            this.userRoleInOrg = value;
-        } else {
-            return value
-        }
-    });
+function camelCase(key: string): string {
+    return key.replace(/_([a-z])/g, function (g) {
+        return g[1].toUpperCase();
+    })
 }

@@ -10,9 +10,11 @@ export function httpRequest(
     method: string,
     body?: string
 ): Promise<HttpResponse> {
+    let userAgent = `propelauth-node/${process.env.npm_package_version} node/${process.version} ${process.platform}/${process.arch}`
     let headers: any = {
-        'Authorization': "Bearer " + apiKey,
+        Authorization: "Bearer " + apiKey,
         "Content-Type": "application/json",
+        "User-Agent": userAgent,
     }
 
     return fetch(authUrlOrigin.origin + path, {

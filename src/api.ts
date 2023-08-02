@@ -247,6 +247,7 @@ export type CreateUserRequest = {
     username?: string,
     firstName?: string,
     lastName?: string,
+    properties?: { [key: string]: any },
 }
 
 export function createUser(authUrl: URL, integrationApiKey: string, createUserRequest: CreateUserRequest): Promise<User> {
@@ -261,6 +262,7 @@ export function createUser(authUrl: URL, integrationApiKey: string, createUserRe
         username: createUserRequest.username,
         first_name: createUserRequest.firstName,
         last_name: createUserRequest.lastName,
+        properties: createUserRequest.properties,
     }
     return httpRequest(authUrl, integrationApiKey, `/api/backend/v1/user/`, "POST", JSON.stringify(request))
         .then((httpResponse) => {
@@ -282,6 +284,7 @@ export type UpdateUserMetadataRequest = {
     lastName?: string,
     pictureUrl?: string
     metadata?: { [key: string]: any }
+    properties?: { [key: string]: any }
 }
 
 export function updateUserMetadata(authUrl: URL, integrationApiKey: string, userId: string, updateUserMetadataRequest: UpdateUserMetadataRequest): Promise<boolean> {
@@ -295,6 +298,7 @@ export function updateUserMetadata(authUrl: URL, integrationApiKey: string, user
         last_name: updateUserMetadataRequest.lastName,
         picture_url: updateUserMetadataRequest.pictureUrl,
         metadata: updateUserMetadataRequest.metadata,
+        properties: updateUserMetadataRequest.properties,
     }
     return httpRequest(authUrl, integrationApiKey, `/api/backend/v1/user/${userId}`, "PUT", JSON.stringify(request))
         .then((httpResponse) => {
@@ -568,6 +572,7 @@ export type MigrateUserFromExternalSourceRequest = {
     firstName?: string,
     lastName?: string,
     username?: string,
+    properties?: { [key: string]: any },
 }
 
 export function migrateUserFromExternalSource(authUrl: URL,
@@ -587,6 +592,7 @@ export function migrateUserFromExternalSource(authUrl: URL,
         first_name: migrateUserFromExternalSourceRequest.firstName,
         last_name: migrateUserFromExternalSourceRequest.lastName,
         username: migrateUserFromExternalSourceRequest.username,
+        properties: migrateUserFromExternalSourceRequest.properties,
     }
     return httpRequest(authUrl, integrationApiKey, `/api/backend/v1/migrate_user/`, "POST", JSON.stringify(request))
         .then((httpResponse) => {

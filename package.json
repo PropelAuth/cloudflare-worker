@@ -4,7 +4,7 @@
     "type": "git",
     "url": "https://github.com/PropelAuth/cloudflare-worker"
   },
-  "version": "v2.1.2",
+  "version": "v2.1.3",
   "license": "MIT",
   "keywords": [
     "auth",
@@ -39,6 +39,7 @@
     "prepublishOnly": "npm run build"
   },
   "module": "dist/index.mjs",
+  "main": "dist/index.mjs",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"

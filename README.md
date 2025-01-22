@@ -6,13 +6,14 @@
 
 # PropelAuth Cloudflare Worker Authentication
 
+> :warning: This library is now deprecated. Instead, use our new Cloudflare Workers library with documentation located [here](https://docs.propelauth.com/reference/backend-apis/cloudflare-workers).
+
 A library for managing authentication, backed by [PropelAuth](https://www.propelauth.com?ref=github). 
 
 [PropelAuth](https://www.propelauth.com?ref=github) is a prebuilt, hosted authentication solution focused on a great developer experience. 
 
 ## Documentation
 
-- Full reference this library is [here](https://docs.propelauth.com/reference/frontend-apis/cloudflare.html)
 - Getting started guides for PropelAuth are [here](https://docs.propelauth.com/)
 
 ## Questions?
